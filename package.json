@@ -1,0 +1,41 @@
+{
+  "author": "Noman",
+  "name": "e_commerce_api",
+  "version": "1.0.0",
+  "description": "🚀 An API for managing e-commerce functionality built with Node.js and TypeScript, designed for scalability and containerization using Docker. 🛒",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc --watch & node --watch --env-file=.env dist/server.js ⚙️",
+    "start": "node dist/server.js ▶️",
+    "rm": "rm -rf dist 🗑️"
+  },
+  "keywords": [
+    "🔗 api",
+    "🛠️ typescript",
+    "💻 nodejs/express",
+    "🗄️ mongodb",
+    "🐳 docker"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "argon2": "^0.41.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "5.0.1",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
+    "@types/cors": "^2.8.17",
+    "@types/ejs": "^3.1.5",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.10.7"
+  }
+}
