@@ -17,7 +17,7 @@ const userSchema = new Schema<User & Document>(
   {
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true, index: true },
-    password: { type: String, required: true, minlength: 6, maxlength: 20 },
+    password: { type: String, required: true, minlength: 6, select: false },
     phone: { type: String, required: true, unique: true },
     role: { type: String, enum: ["user", "agent", "admin"], default: "user" },
     packages: [{ type: Schema.Types.ObjectId, ref: "Package" }],

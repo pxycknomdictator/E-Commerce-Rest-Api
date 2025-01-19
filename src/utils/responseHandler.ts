@@ -19,6 +19,8 @@ export class ResponseHandler {
     this.message = message;
     this.status = status;
     this.data = data;
+
+    this.sendResponse();
   }
 
   sendResponse(): void {
