@@ -8,6 +8,7 @@ export interface Package {
   quantity: number;
   image: string;
   size: "sm" | "md" | "lg";
+  category: string;
   createdAt: Date;
   updateAt: Date;
 }
@@ -19,6 +20,7 @@ const packageSchema = new Schema<Package & Document>(
     price: { type: Number, required: true },
     quantity: { type: Number, required: true },
     image: { type: String, required: true, default: "/" },
+    category: { type: String, required: true },
     size: { type: String, enum: ["sm", "md", "lg"] },
   },
   { timestamps: true }
