@@ -16,7 +16,7 @@ export const generateToken = (payload: UserPayload): string => {
   });
 };
 
-interface RequestPayload extends Request {
+export interface RequestPayload extends Request {
   user?: UserPayload;
 }
 

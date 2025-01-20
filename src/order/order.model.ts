@@ -13,7 +13,11 @@ const orderSchema = new Schema<Order & Document>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     packageId: { type: Schema.Types.ObjectId, ref: "Package", required: true },
-    status: { type: String, enum: ["Pending", "Cancelled", "Delivered"] },
+    status: {
+      type: String,
+      enum: ["Pending", "Cancelled", "Delivered"],
+      default: "Pending",
+    },
   },
   { timestamps: true }
 );
