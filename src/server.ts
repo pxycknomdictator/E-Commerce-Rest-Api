@@ -1,10 +1,14 @@
-import { app } from "./app.js";
+import { app, NextFunction, Response, Request } from "./app.js";
 import { config } from "./config/configuration.js";
 import { createServer } from "http";
 import { databaseConnection } from "./config/db.js";
 
 const PORT = config.port ?? 9000;
 const server = createServer(app);
+
+app.get("/health", (req: Request, res: Response, next: NextFunction) => {
+  res.send("<h1>Server is Running ...</h1>");
+});
 
 async function startServer() {
   try {
