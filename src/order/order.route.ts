@@ -6,15 +6,19 @@ import {
   updateOrder,
   deleteOrder,
 } from "./order.controller.js";
+import { authenticationValidator } from "../middlewares/authentication.js";
 
 const orderRouter = Router();
 
-orderRouter.route("/orders").get(showAllOrders).post(addNewOrder);
+orderRouter
+  .route("/orders")
+  .get(authenticationValidator, showAllOrders)
+  .post(authenticationValidator, addNewOrder);
 
 orderRouter
   .route("/orders/:id")
-  .get(getSingleOrder)
-  .put(updateOrder)
-  .delete(deleteOrder);
+  .get(authenticationValidator, getSingleOrder)
+  .put(authenticationValidator, updateOrder)
+  .delete(authenticationValidator, deleteOrder);
 
 export default orderRouter;

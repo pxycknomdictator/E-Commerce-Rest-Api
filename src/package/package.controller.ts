@@ -1,32 +1,8 @@
 import { NextFunction, Request, Response } from "../app.js";
+import { config } from "../config/configuration.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ResponseHandler } from "../utils/responseHandler.js";
 import { Package } from "./package.model.js";
-
-export const getAllPackages = asyncHandler(
-  async (req: Request, res: Response, _next: NextFunction) => {
-    const skip = parseInt(req.query.skip as string) || 0;
-    const { limit, category } = req.query;
-    if (limit && category) {
-      const packages = await Package.find({ category })
-        .limit(+limit)
-        .skip(skip);
-      new ResponseHandler(res, 200, "packages", "ok", packages);
-      return;
-    }
-
-    const packages = await Package.find();
-    new ResponseHandler(res, 200, "packages", "ok", packages);
-  }
-);
-
-export const getSinglePackage = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const singlePackage = await Package.findById(id);
-    new ResponseHandler(res, 200, "single package", "ok", singlePackage);
-  }
-);
 
 interface PackageBody {
   title?: string;
@@ -38,50 +14,107 @@ interface PackageBody {
   category?: string;
 }
 
-export const createPackage = asyncHandler(
+export const getAllPackages = asyncHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
-    const packageBody: PackageBody = req.body;
-    if (!packageBody) {
-      new ResponseHandler(res, 400, "All fields required", "not okay", null);
+    const skip = parseInt(req.query.skip as string) || 0;
+    const { limit, category } = req.query;
+
+    let packages;
+    if (limit && category) {
+      packages = await Package.find({ category })
+        .limit(Number(limit))
+        .skip(skip);
+    } else {
+      packages = await Package.find().skip(skip);
+    }
+
+    new ResponseHandler(res, 200, "packages", "ok", packages);
+  }
+);
+
+export const getSinglePackage = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const singlePackage = await Package.findById(id);
+
+    if (!singlePackage) {
+      new ResponseHandler(res, 404, "Package not found", "not ok", null);
       return;
     }
-    const newPackage = await Package.create(packageBody);
+
+    new ResponseHandler(res, 200, "single package", "ok", singlePackage);
+  }
+);
+
+export const createPackage = asyncHandler(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const { category, description, price, quantity, size, title }: PackageBody =
+      req.body.form_data ? JSON.parse(req.body.form_data) : {};
+
+    if (![category, description, price, quantity, size, title].every(Boolean)) {
+      new ResponseHandler(res, 400, "All fields are required", "not ok", null);
+      return;
+    }
+
+    const newPackage = await Package.create({
+      category,
+      description,
+      price,
+      quantity,
+      size,
+      title,
+      image: `${config.url}:${config.port}/images/${req.file?.filename}`,
+    });
+
     new ResponseHandler(res, 201, "new package", "ok", newPackage);
   }
 );
 
 export const updatePackage = asyncHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
-    const newUpdatedPackage: PackageBody = {};
     const { id } = req.params;
-    const {
+
+    const { category, description, price, quantity, size, title }: PackageBody =
+      req.body;
+
+    const updatedPackage: PackageBody = {
       category,
       description,
-      image,
       price,
       quantity,
       size,
       title,
-    }: PackageBody = req.body;
+      image: req.file
+        ? `${config.url}:${config.port}/images/${req.file.filename}`
+        : undefined,
+    };
 
-    if (category) newUpdatedPackage["category"] = category;
-    if (title) newUpdatedPackage["title"] = title;
-    if (size) newUpdatedPackage["size"] = size;
-    if (description) newUpdatedPackage["description"] = description;
-    if (price) newUpdatedPackage["price"] = price;
-    if (quantity) newUpdatedPackage["quantity"] = quantity;
-    if (image) newUpdatedPackage["image"] = image;
+    const updatedPackageData = await Package.findByIdAndUpdate(
+      id,
+      updatedPackage,
+      { new: true }
+    );
 
-    await Package.findByIdAndUpdate(id, newUpdatedPackage, { new: true });
-    res.status(200).json({ id, message: "package updated" });
-    return;
+    if (!updatedPackageData) {
+      new ResponseHandler(res, 404, "Package not found", "not ok", null);
+      return;
+    }
+
+    new ResponseHandler(res, 200, "Package updated", "ok", updatedPackageData);
   }
 );
 
 export const deletePackage = asyncHandler(
   async (req: Request, res: Response, _next: NextFunction) => {
     const { id } = req.params;
+
     const deletedPackage = await Package.findByIdAndDelete(id);
-    new ResponseHandler(res, 200, "package deleted", "ok", deletedPackage);
+
+    if (!deletedPackage) {
+      new ResponseHandler(res, 404, "Package not found", "not ok", null);
+      return;
+    }
+
+    new ResponseHandler(res, 200, "Package deleted", "ok", deletedPackage);
   }
 );
