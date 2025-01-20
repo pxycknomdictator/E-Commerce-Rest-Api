@@ -7,7 +7,14 @@ const PORT = config.port ?? 9000;
 const server = createServer(app);
 
 app.get("/health", (req: Request, res: Response, next: NextFunction) => {
-  res.send("<h1>Server is Running ...</h1>");
+  res.send(`
+    <div style="font-family: Arial, sans-serif; text-align: center; margin-top: 50px;">
+      <h1 style="color: #007bff; font-size: 2.5rem;">🐳 Server is Running...</h1>
+      <p style="color: #555; font-size: 1.2rem;">
+        Everything is working perfectly. Enjoy coding! 🚀
+      </p>
+    </div>
+  `);
 });
 
 async function startServer() {

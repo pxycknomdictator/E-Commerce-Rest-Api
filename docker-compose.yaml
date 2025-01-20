@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - 27017:27017
+    networks:
+      - api_network
+
+  backend:
+    container_name: commerce
+    image: pxycknomdictator/e-commerce
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    networks:
+      - api_network
+    command:
+      ["sh", "-c", "until nc -z mongodb 27017; do sleep 1; done; npm start"]
+
+networks:
+  api_network:
